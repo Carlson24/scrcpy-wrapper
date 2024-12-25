@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-iced = { version = "0.13.1", features = ["highlighter", "tokio"] }
+iced = { version = "0.13.1", features = ["tokio"] }
 json5 = "0.4.1"
 serde = { version = "1.0.216", features = ["derive", "serde_derive"] }
 sys-locale = "0.3.2"
