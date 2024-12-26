@@ -1,0 +1,96 @@
+name: Release
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.event.commits[0].message, '+release') || github.event_name == 'workflow_dispatch'  }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check git tag
+        run: |
+          version=$(grep version Cargo.toml -m 1 | cut -d'=' -f2 | tr -d "\r" | tr -d ' ' | tr -d '"' | tr -d "'")
+          git rev-parse $version || exit 0
+          exit 1
+  build:
+    runs-on: ${{ matrix.host_os }}-latest
+    if: ${{ contains(github.event.commits[0].message, '+release') || github.event_name == 'workflow_dispatch' }}
+    needs: check
+    strategy:
+      matrix:
+        host_os:
+          - ubuntu
+          - macos
+          - windows
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: release-${{ matrix.host_os }}
+      - name: Build
+        run: cargo build --release
+      - name: Pre-upload
+        if: ${{ !contains(matrix.host_os, 'windows') }}
+        run: |
+          mkdir target/scrcpy-wrapper || rm -rf target/scrcpy-wrapper/*
+          cp README.md target/scrcpy-wrapper/README.md
+          cp target/release/scrcpy-wrapper target/scrcpy-wrapper/scrcpy-wrapper
+          cd target/scrcpy-wrapper
+          zip -r scrcpy-wrapper-${{ matrix.host_os }}.zip *
+      - name: Pre-upload
+        if: ${{ contains(matrix.host_os, 'windows') }}
+        run: |
+          mkdir target/scrcpy-wrapper -Force
+          del target/scrcpy-wrapper/* -Recurse -Force
+          copy README.md target/scrcpy-wrapper/README.md
+          copy target/release/scrcpy-wrapper.exe target/scrcpy-wrapper/scrcpy-wrapper.exe
+          cd target/scrcpy-wrapper
+          Compress-Archive -Path * -Destination scrcpy-wrapper-${{ matrix.host_os }}.zip
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrcpy-wrapper-${{ matrix.host_os }}.zip
+          path: target/scrcpy-wrapper/scrcpy-wrapper-${{ matrix.host_os }}.zip
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.event.commits[0].message, '+release') || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Generate release info and tag
+        run: |
+          version=$(grep version Cargo.toml -m 1 | cut -d'=' -f2 | tr -d "\r" | tr -d ' ' | tr -d '"' | tr -d "'")
+          echo "version=$version">>$GITHUB_ENV
+          release_info=release.md
+          echo "release_info=$release_info">>$GITHUB_ENV
+          echo "## Commits" > $release_info
+          number=$(git log --oneline $(git rev-parse `git describe --tags --abbrev=0`)..HEAD | wc -l)
+          echo "$(git log --pretty='- [%h] %s' -$number)" >> $release_info
+      - name: Create Release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          artifacts: artifacts/*
+          bodyFile: ${{ env.release_info }}
+          tag: ${{ env.version }}
+          name: ${{ env.version }}
+          makeLatest: true
