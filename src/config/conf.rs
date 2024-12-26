@@ -218,12 +218,12 @@ impl ConfigRaw {
     pub fn load() -> Result<Self, Box<dyn Error>> {
         let base = env::current_exe()?;
         let base = base.to_str().unwrap();
-        if Path::new(&resolve(base, "scrcpy-wrapper.json")).exists() {
-            let path = resolve(base, "scrcpy-wrapper.json");
+        if Path::new(&resolve(base, "scrcpy-wrapper.toml")).exists() {
+            let path = resolve(base, "scrcpy-wrapper.toml");
             let mut file = File::open(&path)?;
             let mut toml_str = String::new();
             file.read_to_string(&mut toml_str)?;
-            let t: ConfigRaw = json5::from_str(toml_str.as_str())?;
+            let t: ConfigRaw = toml::from_str(toml_str.as_str())?;
             Ok(t)
         } else {
             Err("Config file not found".into())
@@ -233,18 +233,18 @@ impl ConfigRaw {
     pub fn dump(&self) -> Result<(), Box<dyn Error>> {
         let base = env::current_exe()?;
         let base = base.to_str().unwrap();
-        let path = resolve(base, "scrcpy-wrapper.json");
+        let path = resolve(base, "scrcpy-wrapper.toml");
         let mut file = File::create(&path)?;
-        file.write_all(json5::to_string(self)?.as_bytes())?;
+        file.write_all(toml::to_string(self)?.as_bytes())?;
         Ok(())
     }
 
     pub async fn dump_async(&self) -> Result<(), Box<dyn Error>> {
         let base = env::current_exe()?;
         let base = base.to_str().unwrap();
-        let path = resolve(base, "scrcpy-wrapper.json");
+        let path = resolve(base, "scrcpy-wrapper.toml");
         let mut file = async_std::fs::File::create(&path).await?;
-        file.write_all(json5::to_string(self)?.as_bytes()).await?;
+        file.write_all(toml::to_string(self)?.as_bytes()).await?;
         Ok(())
     }
 }
