@@ -20,7 +20,7 @@ pub struct WinMain {
 impl Default for WinMain {
     fn default() -> Self {
         Self {
-            args: String::new(),
+            args: build_args(),
             size: Size {
                 width: 800.0,
                 height: 600.0,
