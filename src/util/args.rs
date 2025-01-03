@@ -220,7 +220,7 @@ pub fn build_args() -> String {
     }
 
     if config.virtual_display {
-        args.push_str(" --new-display");
+        args.push_str(" --new-display=");
         args.push_str(&config.display_width.to_string());
         args.push('x');
         args.push_str(&config.display_height.to_string());
