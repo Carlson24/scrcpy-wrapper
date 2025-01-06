@@ -32,10 +32,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     drop(CONFIG.read().unwrap());
 
     iced::application(
-        &t! {r
-            en: "Scrcpy Config",
-            zh: "Scrcpy 配置"
-        },
+        ui::WinMain::title,
         ui::WinMain::update,
         ui::WinMain::view,
     )

@@ -24,7 +24,7 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             }
             .to_string()
         ),
-        StateButton::pick_list(config.video_source.clone(), Message::VideoSourceChanged)
+        StateButton::pick_list(config.video_source, Message::VideoSourceChanged)
     ]
     .spacing(style_default::Spacing::general())
     .align_y(Center);
@@ -39,7 +39,7 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
     };
     if config.video_source == VideoSource::Camera {
         source = source.push(StateButton::pick_list(
-            config.camera.clone(),
+            config.camera,
             Message::CameraChanged,
         ))
     }
@@ -85,7 +85,7 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             }
             .to_string()
         ),
-        StateButton::pick_list(config.video_codec.clone(), Message::VideoCodecChanged),
+        StateButton::pick_list(config.video_codec, Message::VideoCodecChanged),
         text(
             t! {
                 en: "Options: ",
@@ -111,11 +111,11 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             .to_string(),
         ),
         StateButton::button(
-            config.orientation_type.clone(),
+            config.orientation_type,
             Message::OrientationTypeChanged
         ),
         StateButton::pick_list(
-            config.orientation_angle.clone(),
+            config.orientation_angle,
             Message::OrientationAngleChanged
         )
     ]

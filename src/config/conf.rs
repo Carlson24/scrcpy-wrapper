@@ -122,9 +122,9 @@ impl ConfigRaw {
                     };
                     Language::En
                 }
-                _ => LANGUAGE.read().unwrap().clone(),
+                _ => *LANGUAGE.read().unwrap(),
             },
-            None => LANGUAGE.read().unwrap().clone(),
+            None => *LANGUAGE.read().unwrap(),
         };
         let executable = match &self.executable {
             None => {
@@ -310,6 +310,7 @@ pub trait ConfigEnum {
     fn to_config_string(&self) -> String;
 }
 
+#[macro_export]
 macro_rules! config_enum {
     (
         pub enum $name:ident {
@@ -319,7 +320,7 @@ macro_rules! config_enum {
             )*
         }
     ) => {
-        #[derive(Clone, PartialEq, Debug, Default)]
+        #[derive(Copy, Clone, PartialEq, Debug, Default)]
         pub enum $name {
             $(
                 $(#[$meta])?

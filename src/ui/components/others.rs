@@ -1,7 +1,7 @@
 use crate::t;
 use crate::ui::{style_default, ComponentConfig, Message, StateButton};
-use iced::widget::{checkbox, column, row, text, text_input, Column};
-use iced::Center;
+use iced::widget::{button, checkbox, column, row, text, text_input, Column};
+use iced::{Center, Length};
 
 // pub start_app: String,
 // pub restart_app: bool,
@@ -26,7 +26,7 @@ pub fn others<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
             .to_string()
         )
         .size(style_default::Size::text_in_button()),
-        StateButton::button(config.app_name_type.clone(), Message::AppNameTypeChanged),
+        StateButton::button(config.app_name_type, Message::AppNameTypeChanged),
         text_input("", &config.start_app)
             .size(style_default::Size::input())
             .padding(style_default::Padding::input())
@@ -120,6 +120,23 @@ pub fn others<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
     .spacing(style_default::Spacing::general())
     .align_y(Center);
 
+    let reset = button(
+        text(
+            t! {
+                en: "Reset",
+                zh: "重置"
+            }
+            .to_string(),
+        )
+        .align_x(Center)
+        .align_y(Center)
+        .size(style_default::Size::text_in_button()),
+    )
+    .on_press(Message::Reset)
+    .style(button::secondary)
+    .height(style_default::Height::button())
+    .width(Length::Shrink);
+
     column![
         sub_title,
         start_app,
@@ -134,7 +151,8 @@ pub fn others<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
             .spacing(style_default::Spacing::general())
             .align_y(Center),
         disable_screensaver,
-        additional_args
+        additional_args,
+        reset
     ]
     .spacing(style_default::Spacing::general())
 }

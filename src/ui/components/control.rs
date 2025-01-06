@@ -20,7 +20,7 @@ pub fn control<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme,
             }
             .to_string()
         ),
-        StateButton::pick_list(config.keyboard.clone(), Message::KeyboardChanged)
+        StateButton::pick_list(config.keyboard, Message::KeyboardChanged)
     ];
     let mouse = row![
         text(
@@ -30,7 +30,7 @@ pub fn control<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme,
             }
             .to_string()
         ),
-        StateButton::pick_list(config.mouse.clone(), Message::MouseChanged)
+        StateButton::pick_list(config.mouse, Message::MouseChanged)
     ];
     let gamepad = row![
         text(
@@ -40,7 +40,7 @@ pub fn control<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme,
             }
             .to_string()
         ),
-        StateButton::pick_list(config.gamepad.clone(), Message::GamepadChanged)
+        StateButton::pick_list(config.gamepad, Message::GamepadChanged)
     ];
 
     column![sub_title, keyboard, mouse, gamepad]

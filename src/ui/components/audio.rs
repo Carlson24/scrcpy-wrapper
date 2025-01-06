@@ -24,7 +24,7 @@ pub fn audio<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             }
             .to_string()
         ),
-        StateButton::pick_list(config.audio_source.clone(), Message::AudioSourceChanged)
+        StateButton::pick_list(config.audio_source, Message::AudioSourceChanged)
     ]
     .spacing(style_default::Spacing::general())
     .align_y(Center);
@@ -67,7 +67,7 @@ pub fn audio<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             }
             .to_string()
         ),
-        StateButton::pick_list(config.audio_codec.clone(), Message::AudioCodecChanged),
+        StateButton::pick_list(config.audio_codec, Message::AudioCodecChanged),
         text(
             t! {
                 en: "Options: ",

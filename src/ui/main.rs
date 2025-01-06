@@ -1,10 +1,8 @@
-use crate::config::{
-    AppNameType, AudioCodec, AudioSource, Camera, Config, ConnectMethod, Gamepad, Keyboard, Mouse,
-    OrientationAngle, OrientationType, VideoCodec, VideoSource,
-};
+use crate::config::{AppNameType, AudioCodec, AudioSource, Camera, Config, ConfigRaw, ConnectMethod, Gamepad, Keyboard, Mouse, OrientationAngle, OrientationType, VideoCodec, VideoSource};
+use crate::i18n::{Language, LANGUAGE};
 use crate::ui::{components, style_default};
 use crate::util::build_args;
-use crate::{ARGS, CONFIG};
+use crate::{t, ARGS, CONFIG};
 use dark_light::Mode;
 use iced::widget::container::Id;
 use iced::widget::{column, container, horizontal_rule, scrollable};
@@ -77,11 +75,21 @@ pub enum Message {
     DisableScreensaverChanged(bool),
     AdditionalArgsChanged(String),
 
+    LanguageChanged(Language),
+
     ArgsChanged(String),
+    Reset,
     Run,
     Resize(Size),
 }
 impl WinMain {
+    pub fn title(&self) -> String {
+        String::from(&t! {
+            en: "Scrcpy Config",
+            zh: "Scrcpy 配置"
+        })
+    }
+    
     pub fn update(&mut self, message: Message) -> impl Into<Task<Message>> {
         match message {
             Message::ExecutablePathChanged(path) => {
@@ -297,8 +305,21 @@ impl WinMain {
                 self.args = build_args();
             }
 
+            Message::LanguageChanged(language) => {
+                CONFIG.write().unwrap().language = language;
+                *LANGUAGE.write().unwrap() = language;
+                self.args = build_args();
+            }
+
             Message::ArgsChanged(command) => {
                 self.args = command;
+            }
+            Message::Reset => {
+                let mut c=ConfigRaw::default().to_config(false).unwrap();
+                c.language = *LANGUAGE.read().unwrap();
+                *CONFIG.write().unwrap() = Box::new(c);
+                CONFIG.read().unwrap().to_raw().dump().unwrap();
+                self.args = build_args();
             }
             Message::Resize(size) => {
                 self.size = size;
@@ -313,7 +334,7 @@ impl WinMain {
 
     pub fn view(&self) -> Element<Message> {
         let config = CONFIG.try_read().unwrap();
-
+        
         let config_section = column![
             components::exe_info(&config),
             components::connect_method(&config),

@@ -1,6 +1,6 @@
 use crate::t;
 use crate::ui::{style_default, ComponentConfig, Message};
-use iced::widget::{horizontal_space, row, text, text_input, Row};
+use iced::widget::{row, text, text_input, Row};
 use iced::{Center, Left};
 
 pub fn exe_info<'a>(config: &ComponentConfig) -> Row<'a, Message, iced::Theme, iced::Renderer> {
@@ -20,7 +20,6 @@ pub fn exe_info<'a>(config: &ComponentConfig) -> Row<'a, Message, iced::Theme, i
         .align_x(Center)
         .padding(style_default::Padding::input())
         .size(style_default::Size::input())
-        .width(500)
         .align_x(Left)
     };
     let executable_path_row = row![
@@ -29,7 +28,6 @@ pub fn exe_info<'a>(config: &ComponentConfig) -> Row<'a, Message, iced::Theme, i
             zh: "scrcpy 可执行文件路径："
         }),
         executable_path,
-        horizontal_space()
     ]
     .spacing(style_default::Spacing::general())
     .align_y(Center);
