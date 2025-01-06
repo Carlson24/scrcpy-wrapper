@@ -251,13 +251,8 @@ impl ConfigRaw {
 
 impl Config {
     pub fn to_raw(&self) -> ConfigRaw {
-        let language = Some(match &self.language {
-            Language::Zh => String::from("zh"),
-            Language::En => String::from("en"),
-        });
-
         ConfigRaw {
-            language,
+            language: Some(self.language.to_config_string()),
             executable: self.executable.clone(),
             connect_method: Some(self.connect_method.to_config_string()),
             video_source: Some(self.video_source.to_config_string()),
