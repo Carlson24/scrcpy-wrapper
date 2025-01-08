@@ -1,22 +1,18 @@
 use crate::config::{OrientationAngle, OrientationType, VideoSource};
-use crate::t;
-use crate::ui::{style_default, ComponentConfig, Message, StateButton};
-use iced::widget::{checkbox, row, text, text_input, Column};
-use iced::Center;
+use crate::ui::{ComponentConfig, Message, StateButton};
+use crate::{d_column, d_row, d_sub_title, d_text_input, t};
+use iced::widget::{checkbox, text, Column};
 
 pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, iced::Renderer> {
-    let sub_title = text(
-        t! {
-            en: "Video",
-            zh: "视频"
-        }
-        .to_string(),
-    )
-    .size(style_default::Size::text_sub_title());
+    let sub_title = d_sub_title!(t! {
+        en: "Video",
+        zh: "视频"
+    }
+    .to_string());
 
-    let column = iced::widget::column![sub_title].spacing(style_default::Spacing::general());
+    let column = d_column![sub_title];
 
-    let mut source = row![
+    let mut source = d_row![
         text(
             t! {
                 en: "Video source: ",
@@ -25,9 +21,7 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             .to_string()
         ),
         StateButton::pick_list(config.video_source, Message::VideoSourceChanged)
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
     if config.video_source == VideoSource::No {
         return column.push(source);
@@ -53,7 +47,7 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             .to_string(),
         ))
         .push(
-            text_input(
+            d_text_input!(
                 &t! {
                     en: "longest side, e.g. 1920",
                     zh: "最长边，例如 1920"
@@ -61,8 +55,6 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
                 &camera_size,
             )
             .on_input(Message::VideoSizeChanged)
-            .size(style_default::Size::input())
-            .padding(style_default::Padding::input())
             .width(180),
         )
         .push(
@@ -77,7 +69,7 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             .on_toggle(Message::VideoPlaybackChanged),
         );
 
-    let codec = row![
+    let codec = d_row![
         text(
             t! {
                 en: "Video codec: ",
@@ -93,16 +85,12 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             }
             .to_string()
         ),
-        text_input("", &config.video_codec_options,)
-            .size(style_default::Size::input())
-            .padding(style_default::Padding::input())
+        d_text_input!("", &config.video_codec_options)
             .width(300)
             .on_input(Message::VideoCodecOptionsChanged)
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
-    let mut orientation = row![
+    let mut orientation = d_row![
         text(
             t! {
                 en: "Orientation (clockwise): ",
@@ -110,17 +98,9 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             }
             .to_string(),
         ),
-        StateButton::button(
-            config.orientation_type,
-            Message::OrientationTypeChanged
-        ),
-        StateButton::pick_list(
-            config.orientation_angle,
-            Message::OrientationAngleChanged
-        )
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+        StateButton::button(config.orientation_type, Message::OrientationTypeChanged),
+        StateButton::pick_list(config.orientation_angle, Message::OrientationAngleChanged)
+    ];
 
     if config.orientation_type == OrientationType::Capture {
         orientation = orientation.push(

@@ -1,8 +1,7 @@
 use crate::config::{AudioCodec, AudioSource, VideoSource};
-use crate::t;
-use crate::ui::{style_default, ComponentConfig, Message};
-use iced::widget::{checkbox, row, text, text_input, Column};
-use iced::Center;
+use crate::ui::{ComponentConfig, Message};
+use crate::{d_column, d_row, d_sub_title, d_text_input, t};
+use iced::widget::{checkbox, text, Column};
 
 pub fn performance<'a>(
     config: &ComponentConfig,
@@ -10,16 +9,13 @@ pub fn performance<'a>(
     let have_audio = config.audio_source != AudioSource::No;
     let have_video = config.video_source != VideoSource::No;
 
-    let sub_title = text(
-        t! {
-            en: "Performance",
-            zh: "性能"
-        }
-        .to_string(),
-    )
-    .size(style_default::Size::text_sub_title());
+    let sub_title = d_sub_title!(t! {
+        en: "Performance",
+        zh: "性能"
+    }
+    .to_string(),);
 
-    let mut column = iced::widget::column![sub_title].spacing(style_default::Spacing::general());
+    let mut column = d_column![sub_title];
 
     if !have_audio && !have_video {
         return column.push(
@@ -34,15 +30,13 @@ pub fn performance<'a>(
         );
     }
 
-    let mut bit_rate = row![text(
+    let mut bit_rate = d_row![text(
         t! {
             en: "Bit rate: ",
             zh: "码率："
         }
         .to_string()
-    )]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    )];
 
     if have_video {
         bit_rate = bit_rate
@@ -54,9 +48,7 @@ pub fn performance<'a>(
                 .to_string(),
             ))
             .push(
-                text_input("8M", &config.video_bit_rate.to_string())
-                    .size(style_default::Size::input())
-                    .padding(style_default::Padding::input())
+                d_text_input!("8M", &config.video_bit_rate.to_string())
                     .on_input(Message::VideoBitRateChanged)
                     .width(100),
             );
@@ -72,9 +64,7 @@ pub fn performance<'a>(
                 .to_string(),
             ))
             .push(
-                text_input("128K", &config.audio_bit_rate.to_string())
-                    .size(style_default::Size::input())
-                    .padding(style_default::Padding::input())
+                d_text_input!("128K", &config.audio_bit_rate.to_string())
                     .on_input(Message::AudioBitRateChanged)
                     .width(100),
             );
@@ -85,7 +75,7 @@ pub fn performance<'a>(
     }
 
     if have_video {
-        let fps = row![
+        let fps = d_row![
             if config.video_source == VideoSource::Camera {
                 text(
                     t! {
@@ -103,32 +93,26 @@ pub fn performance<'a>(
                     .to_string(),
                 )
             },
-            text_input(
+            d_text_input!(
                 "",
                 &match &config.fps {
                     None => "".to_string(),
                     Some(fps) => fps.to_string(),
                 }
             )
-            .size(style_default::Size::input())
-            .padding(style_default::Padding::input())
             .on_input(Message::FpsChanged)
             .width(60)
-        ]
-        .spacing(style_default::Spacing::general())
-        .align_y(Center);
+        ];
         column = column.push(fps);
     }
 
-    let mut buffer = row![text(
+    let mut buffer = d_row![text(
         t! {
             en: "Buffer: ",
             zh: "缓冲："
         }
         .to_string(),
-    )]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    )];
 
     if have_video {
         buffer = buffer
@@ -140,15 +124,13 @@ pub fn performance<'a>(
                 .to_string(),
             ))
             .push(
-                text_input(
+                d_text_input!(
                     "50",
                     &match &config.video_buffer {
                         None => "".to_string(),
                         Some(buffer) => buffer.to_string(),
                     },
                 )
-                .size(style_default::Size::input())
-                .padding(style_default::Padding::input())
                 .on_input(Message::VideoBufferChanged)
                 .width(52),
             )
@@ -164,15 +146,13 @@ pub fn performance<'a>(
                 .to_string(),
             ))
             .push(
-                text_input(
+                d_text_input!(
                     "50",
                     &match &config.audio_buffer {
                         None => "".to_string(),
                         Some(buffer) => buffer.to_string(),
                     },
                 )
-                .size(style_default::Size::input())
-                .padding(style_default::Padding::input())
                 .on_input(Message::AudioBufferChanged)
                 .width(52),
             )

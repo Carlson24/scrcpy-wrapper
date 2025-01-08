@@ -1,22 +1,20 @@
 use crate::config::AudioSource;
-use crate::t;
-use crate::ui::{style_default, ComponentConfig, Message, StateButton};
-use iced::widget::{checkbox, column, row, text, text_input, Column};
-use iced::Center;
+use crate::ui::{ComponentConfig, Message, StateButton};
+use crate::{d_column, d_row, d_sub_title, d_text_input, t};
+use iced::widget::{checkbox, text, Column};
 
 pub fn audio<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, iced::Renderer> {
-    let sub_title = text(
+    let sub_title = d_sub_title!(
         t! {
             en: "Audio",
             zh: "音频"
         }
         .to_string(),
-    )
-    .size(style_default::Size::text_sub_title());
+    );
 
-    let column = column![sub_title].spacing(style_default::Spacing::general());
+    let column = d_column![sub_title];
 
-    let mut source = row![
+    let mut source = d_row![
         text(
             t! {
                 en: "Audio source: ",
@@ -25,9 +23,7 @@ pub fn audio<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             .to_string()
         ),
         StateButton::pick_list(config.audio_source, Message::AudioSourceChanged)
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
     if config.audio_source == AudioSource::No {
         return column.push(source);
@@ -59,7 +55,7 @@ pub fn audio<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
         .on_toggle(Message::AudioPlaybackChanged),
     );
 
-    let codec = row![
+    let codec = d_row![
         text(
             t! {
                 en: "Audio codec: ",
@@ -75,14 +71,10 @@ pub fn audio<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             }
             .to_string()
         ),
-        text_input("", &config.audio_codec_options,)
-            .size(style_default::Size::input())
-            .padding(style_default::Padding::input())
+        d_text_input!("", &config.audio_codec_options)
             .width(300)
             .on_input(Message::AudioCodecOptionsChanged)
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
     column.push(source).push(codec)
 }

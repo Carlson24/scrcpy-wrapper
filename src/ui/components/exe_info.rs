@@ -1,7 +1,6 @@
-use crate::t;
-use crate::ui::{style_default, ComponentConfig, Message};
-use iced::widget::{row, text, text_input, Row};
-use iced::{Center, Left};
+use crate::ui::{ComponentConfig, Message};
+use crate::{d_row, d_text_input, t};
+use iced::widget::{text, Row};
 
 pub fn exe_info<'a>(config: &ComponentConfig) -> Row<'a, Message, iced::Theme, iced::Renderer> {
     let executable_path = {
@@ -9,7 +8,7 @@ pub fn exe_info<'a>(config: &ComponentConfig) -> Row<'a, Message, iced::Theme, i
             None => String::from(""),
             Some(p) => p.clone(),
         };
-        text_input(
+        d_text_input!(
             &t! {
                 en: "Executable path",
                 zh: "可执行文件路径"
@@ -17,20 +16,14 @@ pub fn exe_info<'a>(config: &ComponentConfig) -> Row<'a, Message, iced::Theme, i
             &exe_str,
         )
         .on_input(Message::ExecutablePathChanged)
-        .align_x(Center)
-        .padding(style_default::Padding::input())
-        .size(style_default::Size::input())
-        .align_x(Left)
     };
-    let executable_path_row = row![
+    let executable_path_row = d_row![
         text(&t! {r
             en: "scrcpy executable path: ",
             zh: "scrcpy 可执行文件路径："
         }),
         executable_path,
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
     executable_path_row
 }

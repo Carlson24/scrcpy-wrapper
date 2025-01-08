@@ -2,10 +2,10 @@ use crate::config::{AppNameType, AudioCodec, AudioSource, Camera, Config, Config
 use crate::i18n::{Language, LANGUAGE};
 use crate::ui::{components, style_default};
 use crate::util::build_args;
-use crate::{t, ARGS, CONFIG};
+use crate::{d_hr, t, ARGS, CONFIG};
 use dark_light::Mode;
 use iced::widget::container::Id;
-use iced::widget::{column, container, horizontal_rule, scrollable};
+use iced::widget::{column, container, scrollable};
 use iced::window::close;
 use iced::{window, Element, Size, Subscription, Task, Theme};
 use std::sync::RwLockReadGuard;
@@ -338,19 +338,19 @@ impl WinMain {
         let config_section = column![
             components::exe_info(&config),
             components::connect_method(&config),
-            horizontal_rule(style_default::Height::hr()),
+            d_hr!(),
             components::video(&config),
-            horizontal_rule(style_default::Height::hr()),
+            d_hr!(),
             components::audio(&config),
-            horizontal_rule(style_default::Height::hr()),
+            d_hr!(),
             components::performance(&config),
-            horizontal_rule(style_default::Height::hr()),
+            d_hr!(),
             components::control(&config),
-            horizontal_rule(style_default::Height::hr()),
+            d_hr!(),
             components::output(&config),
-            horizontal_rule(style_default::Height::hr()),
+            d_hr!(),
             components::virtual_display(&config),
-            horizontal_rule(style_default::Height::hr()),
+            d_hr!(),
             components::others(&config),
         ]
         .padding(style_default::Padding::page())

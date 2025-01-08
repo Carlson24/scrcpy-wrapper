@@ -1,20 +1,18 @@
 use crate::config::{AudioSource, VideoSource};
-use crate::t;
-use crate::ui::{style_default, ComponentConfig, Message};
-use iced::widget::{column, row, text, text_input, Column};
-use iced::Center;
+use crate::ui::{ComponentConfig, Message};
+use crate::{d_column, d_row, d_sub_title, d_text_input, t};
+use iced::widget::{text, Column};
 
 pub fn output<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, iced::Renderer> {
-    let sub_title = text(
+    let sub_title = d_sub_title!(
         t! {
             en: "Output",
             zh: "输出"
         }
         .to_string(),
-    )
-    .size(style_default::Size::text_sub_title());
+    );
 
-    let column = column![sub_title].spacing(style_default::Spacing::general());
+    let column = d_column![sub_title];
 
     if config.video_source == VideoSource::No && config.audio_source == AudioSource::No {
         return column.push(
@@ -29,7 +27,7 @@ pub fn output<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
         );
     }
 
-    let record = row![
+    let record = d_row![
         text(
             t! {
                 en: "Record file: ",
@@ -37,16 +35,12 @@ pub fn output<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
             }
             .to_string(),
         ),
-        text_input("", &config.record)
-            .size(style_default::Size::input())
-            .padding(style_default::Padding::input())
+        d_text_input!("", &config.record)
             .width(500)
             .on_input(Message::RecordChanged),
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
-    let v4l2 = row![
+    let v4l2 = d_row![
         text(
             t! {
                 en: "V4L2 device: ",
@@ -54,14 +48,10 @@ pub fn output<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
             }
             .to_string(),
         ),
-        text_input("", &config.v4l2)
-            .size(style_default::Size::input())
-            .padding(style_default::Padding::input())
+        d_text_input!("", &config.v4l2)
             .width(500)
             .on_input(Message::V4l2Changed),
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
     column.push(record).push(v4l2)
 }

@@ -1,35 +1,24 @@
-use crate::t;
-use crate::ui::{style_default, ComponentConfig, Message, StateButton};
-use iced::widget::{button, checkbox, column, row, text, text_input, Column};
-use iced::{Center, Length};
-
-// pub start_app: String,
-// pub restart_app: bool,
-// pub app_name_type: AppNameType,
+use crate::ui::{ComponentConfig, Message, StateButton};
+use crate::{d_button, d_column, d_row, d_sub_title, d_text_input, t};
+use iced::widget::{checkbox, text, Column};
 
 pub fn others<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, iced::Renderer> {
-    let sub_title = text(
-        t! {
-            en: "Others",
-            zh: "其他"
-        }
-        .to_string(),
-    )
-    .size(style_default::Size::text_sub_title());
+    let sub_title = d_sub_title!(t! {
+        en: "Others",
+        zh: "其他"
+    }
+    .to_string(),);
 
-    let start_app = row![
+    let start_app = d_row![
         text(
             t! {
                 en: "Start app: ",
                 zh: "启动应用："
             }
             .to_string()
-        )
-        .size(style_default::Size::text_in_button()),
+        ),
         StateButton::button(config.app_name_type, Message::AppNameTypeChanged),
-        text_input("", &config.start_app)
-            .size(style_default::Size::input())
-            .padding(style_default::Padding::input())
+        d_text_input!("", &config.start_app)
             .width(200)
             .on_input(Message::StartAppChanged),
         checkbox(
@@ -37,34 +26,27 @@ pub fn others<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
             config.restart_app,
         )
         .on_toggle(Message::RestartAppChanged),
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
-    let time_limit = row![
+    let time_limit = d_row![
         text(
             t! {
                 en: "Time limit: ",
                 zh: "时间限制："
             }
             .to_string()
-        )
-        .size(style_default::Size::text_in_button()),
-        text_input(
+        ),
+        d_text_input!(
             "",
             &match &config.time_limit {
                 Some(time_limit) => time_limit.to_string(),
                 None => "".to_string(),
             },
         )
-        .size(style_default::Size::input())
-        .padding(style_default::Padding::input())
         .width(100)
         .on_input(Message::TimeLimitChanged),
         text("s")
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
     let stay_awake = checkbox(
         t! {en: "Stay awake (device)", zh: "保持唤醒（设备）"}.to_string(),
@@ -102,57 +84,35 @@ pub fn others<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
     )
     .on_toggle(Message::DisableScreensaverChanged);
 
-    let additional_args = row![
+    let additional_args = d_row![
         text(
             t! {
                 en: "Additional arguments",
                 zh: "附加参数"
             }
             .to_string()
-        )
-        .size(style_default::Size::text_in_button()),
-        text_input("", &config.additional_args)
-            .size(style_default::Size::input())
-            .padding(style_default::Padding::input())
+        ),
+        d_text_input!("", &config.additional_args)
             .width(700)
             .on_input(Message::AdditionalArgsChanged)
-    ]
-    .spacing(style_default::Spacing::general())
-    .align_y(Center);
+    ];
 
-    let reset = button(
-        text(
-            t! {
-                en: "Reset",
-                zh: "重置"
-            }
-            .to_string(),
-        )
-        .align_x(Center)
-        .align_y(Center)
-        .size(style_default::Size::text_in_button()),
-    )
-    .on_press(Message::Reset)
-    .style(button::secondary)
-    .height(style_default::Height::button())
-    .width(Length::Shrink);
+    let reset = d_button!(t! {
+        en: "Reset",
+        zh: "重置"
+    }
+    .to_string())
+    .on_press(Message::Reset);
 
-    column![
+    d_column![
         sub_title,
         start_app,
         time_limit,
-        row![stay_awake]
-            .spacing(style_default::Spacing::general())
-            .align_y(Center),
-        row![disable_window, borderless]
-            .spacing(style_default::Spacing::general())
-            .align_y(Center),
-        row![always_on_top, fullscreen]
-            .spacing(style_default::Spacing::general())
-            .align_y(Center),
+        d_row![stay_awake],
+        d_row![disable_window, borderless],
+        d_row![always_on_top, fullscreen],
         disable_screensaver,
         additional_args,
         reset
     ]
-    .spacing(style_default::Spacing::general())
 }

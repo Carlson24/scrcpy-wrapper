@@ -19,7 +19,7 @@ pub mod style_default {
                 right: 20.0,
             }
         }
-        
+
         pub fn container() -> iced::Padding {
             iced::Padding {
                 top: 5.0,
@@ -44,11 +44,11 @@ pub mod style_default {
         pub fn input() -> u16 {
             15
         }
-        
+
         pub fn text_in_button() -> u16 {
             15
         }
-        
+
         pub fn text_sub_title() -> u16 {
             20
         }
@@ -60,9 +60,74 @@ pub mod style_default {
         pub fn button() -> f32 {
             28.0
         }
-        
+
         pub fn hr() -> f32 {
             10.0
         }
     }
+}
+
+#[macro_export]
+macro_rules! d_row {
+    ($($x:expr),+ $(,)?) => {
+        iced::widget::row![$($x,)+]
+            .spacing($crate::ui::style_default::Spacing::general())
+            .align_y(iced::Center)
+    };
+}
+
+#[macro_export]
+macro_rules! d_column {
+    ($($x:expr),+ $(,)?) => {
+        iced::widget::column![$($x,)+]
+            .spacing($crate::ui::style_default::Spacing::general())
+    };
+}
+
+#[macro_export]
+macro_rules! d_text_input {
+    ($($args:tt)*) => {
+        iced::widget::text_input($($args)*)
+            .padding($crate::ui::style_default::Padding::input())
+            .size($crate::ui::style_default::Size::input())
+    };
+}
+
+#[macro_export]
+macro_rules! d_hr {
+    () => {
+        iced::widget::horizontal_rule($crate::ui::style_default::Height::hr())
+    };
+}
+
+#[macro_export]
+macro_rules! d_sub_title {
+    ($($args:tt)*) => {
+        iced::widget::text($($args)*)
+            .size($crate::ui::style_default::Size::text_sub_title())
+    };
+}
+
+#[macro_export]
+macro_rules! d_button {
+    ($text:expr) => {
+        iced::widget::button(
+            iced::widget::text($text)
+            .align_x(iced::Center)
+            .align_y(iced::Center)
+            .size($crate::ui::style_default::Size::text_in_button()))
+        .style(iced::widget::button::secondary)
+        .height($crate::ui::style_default::Height::button())
+        .width(iced::Length::Shrink)
+    };
+}
+
+#[macro_export]
+macro_rules! d_pick_list {
+    ($($args:tt)*) => {
+        iced::widget::pick_list($($args)*)
+            .text_size($crate::ui::style_default::Size::text_in_button())
+            .padding($crate::ui::style_default::Padding::input())
+            .width(iced::Length::Shrink)
+    };
 }
