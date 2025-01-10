@@ -30,40 +30,47 @@ jobs:
     needs: check
     strategy:
       matrix:
-        host_os:
-          - ubuntu
+        os:
+          - linux
           - macos
           - windows
+        include:
+          - os: linux
+            host_os: ubuntu-20.04
+          - os: macos
+            host_os: macos
+          - os: windows
+            host_os: windows
     steps:
       - uses: actions/checkout@v4
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
         with:
-          key: release-${{ matrix.host_os }}
+          key: release-${{ matrix.os }}
       - name: Build
         run: cargo build --release
       - name: Pre-upload
-        if: ${{ !contains(matrix.host_os, 'windows') }}
+        if: ${{ matrix.os != 'windows' }}
         run: |
           mkdir target/scrcpy-wrapper || rm -rf target/scrcpy-wrapper/*
           cp README.md target/scrcpy-wrapper/README.md
           cp target/release/scrcpy-wrapper target/scrcpy-wrapper/scrcpy-wrapper
           cd target/scrcpy-wrapper
-          zip -r scrcpy-wrapper-${{ matrix.host_os }}.zip *
+          zip -r scrcpy-wrapper-${{ matrix.os }}.zip *
       - name: Pre-upload
-        if: ${{ contains(matrix.host_os, 'windows') }}
+        if: ${{ matrix.os == 'windows' }}
         run: |
           mkdir target/scrcpy-wrapper -Force
           del target/scrcpy-wrapper/* -Recurse -Force
           copy README.md target/scrcpy-wrapper/README.md
           copy target/release/scrcpy-wrapper.exe target/scrcpy-wrapper/scrcpy-wrapper.exe
           cd target/scrcpy-wrapper
-          Compress-Archive -Path * -Destination scrcpy-wrapper-${{ matrix.host_os }}.zip
+          Compress-Archive -Path * -Destination scrcpy-wrapper-${{ matrix.os }}.zip
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: scrcpy-wrapper-${{ matrix.host_os }}.zip
-          path: target/scrcpy-wrapper/scrcpy-wrapper-${{ matrix.host_os }}.zip
+          name: scrcpy-wrapper-${{ matrix.os }}.zip
+          path: target/scrcpy-wrapper/scrcpy-wrapper-${{ matrix.os }}.zip
   release:
     needs: build
     runs-on: ubuntu-latest
