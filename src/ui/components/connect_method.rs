@@ -1,10 +1,8 @@
-use crate::ui::{ComponentConfig, Message, StateButton};
-use crate::{d_row, t};
-use iced::widget::{horizontal_space, text, Row};
+use crate::ui::{Message, StateButton};
+use crate::{d_row, define_component, t};
+use iced::widget::{horizontal_space, text};
 
-pub fn connect_method<'a>(
-    config: &ComponentConfig,
-) -> Row<'a, Message, iced::Theme, iced::Renderer> {
+define_component!(connect_method, |config, _| {
     d_row![
         text(&t! {r
             zh: "连接方式：",
@@ -14,4 +12,5 @@ pub fn connect_method<'a>(
         horizontal_space(),
         StateButton::button(config.language, Message::LanguageChanged)
     ]
-}
+    .into()
+});

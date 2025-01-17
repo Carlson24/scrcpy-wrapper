@@ -1,30 +1,30 @@
 use crate::config::{AudioSource, VideoSource};
-use crate::ui::{ComponentConfig, Message};
-use crate::{d_column, d_row, d_sub_title, d_text_input, t};
-use iced::widget::{text, Column};
+use crate::ui::Message;
+use crate::{d_column, d_row, d_sub_title, d_text_input, define_component, t};
+use iced::widget::text;
 
-pub fn output<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, iced::Renderer> {
-    let sub_title = d_sub_title!(
-        t! {
-            en: "Output",
-            zh: "输出"
-        }
-        .to_string(),
-    );
+define_component!(output, |config, _| {
+    let sub_title = d_sub_title!(t! {
+        en: "Output",
+        zh: "输出"
+    }
+    .to_string(),);
 
     let column = d_column![sub_title];
 
     if config.video_source == VideoSource::No && config.audio_source == AudioSource::No {
-        return column.push(
-            text(
-                t! {
-                    en: "No audio and video source",
-                    zh: "没有音频和视频源"
-                }
-                .to_string(),
+        return column
+            .push(
+                text(
+                    t! {
+                        en: "No audio and video source",
+                        zh: "没有音频和视频源"
+                    }
+                    .to_string(),
+                )
+                .color([0.5, 0.5, 0.5]),
             )
-            .color([0.5, 0.5, 0.5]),
-        );
+            .into();
     }
 
     let record = d_row![
@@ -53,5 +53,5 @@ pub fn output<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
             .on_input(Message::V4l2Changed),
     ];
 
-    column.push(record).push(v4l2)
-}
+    column.push(record).push(v4l2).into()
+});

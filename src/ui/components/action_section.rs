@@ -1,8 +1,8 @@
-use crate::ui::{style_default, Message, WinMain};
-use crate::{d_column, d_row, d_text_input, t};
-use iced::widget::{button, horizontal_space, text, Column};
+use crate::ui::{style_default, Message};
+use crate::{d_column, d_row, d_text_input, define_component, t};
+use iced::widget::{button, horizontal_space, text};
 
-pub fn action_section<'a>(win_main: &WinMain) -> Column<'a, Message, iced::Theme, iced::Renderer> {
+define_component!(action_section, |_, win_main| {
     d_column![
         d_text_input!(
             &t! {
@@ -18,4 +18,5 @@ pub fn action_section<'a>(win_main: &WinMain) -> Column<'a, Message, iced::Theme
         ]
     ]
     .padding(style_default::Padding::page())
-}
+    .into()
+});

@@ -1,16 +1,14 @@
 use crate::config::AudioSource;
-use crate::ui::{ComponentConfig, Message, StateButton};
-use crate::{d_column, d_row, d_sub_title, d_text_input, t};
-use iced::widget::{checkbox, text, Column};
+use crate::ui::{Message, StateButton};
+use crate::{d_column, d_row, d_sub_title, d_text_input, define_component, t};
+use iced::widget::{checkbox, text};
 
-pub fn audio<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, iced::Renderer> {
-    let sub_title = d_sub_title!(
-        t! {
-            en: "Audio",
-            zh: "音频"
-        }
-        .to_string(),
-    );
+define_component!(audio, |config, _| {
+    let sub_title = d_sub_title!(t! {
+        en: "Audio",
+        zh: "音频"
+    }
+    .to_string(),);
 
     let column = d_column![sub_title];
 
@@ -26,7 +24,7 @@ pub fn audio<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
     ];
 
     if config.audio_source == AudioSource::No {
-        return column.push(source);
+        return column.push(source).into();
     }
 
     if config.audio_source == AudioSource::Playback {
@@ -76,5 +74,5 @@ pub fn audio<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
             .on_input(Message::AudioCodecOptionsChanged)
     ];
 
-    column.push(source).push(codec)
-}
+    column.push(source).push(codec).into()
+});

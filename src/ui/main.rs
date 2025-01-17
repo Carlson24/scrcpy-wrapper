@@ -1,4 +1,7 @@
-use crate::config::{AppNameType, AudioCodec, AudioSource, Camera, Config, ConfigRaw, ConnectMethod, Gamepad, Keyboard, Mouse, OrientationAngle, OrientationType, VideoCodec, VideoSource};
+use crate::config::{
+    AppNameType, AudioCodec, AudioSource, Camera, ConfigRaw, ConnectMethod, Gamepad,
+    Keyboard, Mouse, OrientationAngle, OrientationType, VideoCodec, VideoSource,
+};
 use crate::i18n::{Language, LANGUAGE};
 use crate::ui::{components, style_default};
 use crate::util::build_args;
@@ -8,7 +11,6 @@ use iced::widget::container::Id;
 use iced::widget::{column, container, scrollable};
 use iced::window::close;
 use iced::{window, Element, Size, Subscription, Task, Theme};
-use std::sync::RwLockReadGuard;
 
 pub struct WinMain {
     pub(crate) args: String,
@@ -26,8 +28,6 @@ impl Default for WinMain {
         }
     }
 }
-
-pub type ComponentConfig = RwLockReadGuard<'static, Box<Config>>;
 
 #[derive(Debug, Clone)]
 pub enum Message {
@@ -89,7 +89,7 @@ impl WinMain {
             zh: "Scrcpy 配置"
         })
     }
-    
+
     pub fn update(&mut self, message: Message) -> impl Into<Task<Message>> {
         match message {
             Message::ExecutablePathChanged(path) => {
@@ -315,7 +315,7 @@ impl WinMain {
                 self.args = command;
             }
             Message::Reset => {
-                let mut c=ConfigRaw::default().to_config(false).unwrap();
+                let mut c = ConfigRaw::default().to_config(false).unwrap();
                 c.language = *LANGUAGE.read().unwrap();
                 *CONFIG.write().unwrap() = Box::new(c);
                 CONFIG.read().unwrap().to_raw().dump().unwrap();
@@ -334,32 +334,34 @@ impl WinMain {
 
     pub fn view(&self) -> Element<Message> {
         let config = CONFIG.try_read().unwrap();
-        
-        let config_section = column![
-            components::exe_info(&config),
-            components::connect_method(&config),
-            d_hr!(),
-            components::video(&config),
-            d_hr!(),
-            components::audio(&config),
-            d_hr!(),
-            components::performance(&config),
-            d_hr!(),
-            components::control(&config),
-            d_hr!(),
-            components::output(&config),
-            d_hr!(),
-            components::virtual_display(&config),
-            d_hr!(),
-            components::others(&config),
-        ]
-        .padding(style_default::Padding::page())
-        .spacing(style_default::Spacing::general());
+
+        let config_section = {
+            column![
+                components::exe_info(&config, self),
+                components::connect_method(&config, self),
+                d_hr!(),
+                components::video(&config, self),
+                d_hr!(),
+                components::audio(&config, self),
+                d_hr!(),
+                components::performance(&config, self),
+                d_hr!(),
+                components::control(&config, self),
+                d_hr!(),
+                components::output(&config, self),
+                d_hr!(),
+                components::virtual_display(&config, self),
+                d_hr!(),
+                components::others(&config, self),
+            ]
+            .padding(style_default::Padding::page())
+            .spacing(style_default::Spacing::general())
+        };
 
         container(
             column![
                 scrollable(config_section).height(self.size.height - 100.0),
-                components::action_section(self)
+                components::action_section(&config, self)
             ]
             .padding(style_default::Padding::container()),
         )

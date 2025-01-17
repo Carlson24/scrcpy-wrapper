@@ -1,9 +1,9 @@
 use crate::config::{OrientationAngle, OrientationType, VideoSource};
-use crate::ui::{ComponentConfig, Message, StateButton};
-use crate::{d_column, d_row, d_sub_title, d_text_input, t};
-use iced::widget::{checkbox, text, Column};
+use crate::ui::{Message, StateButton};
+use crate::{d_column, d_row, d_sub_title, d_text_input, define_component, t};
+use iced::widget::{checkbox, text};
 
-pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, iced::Renderer> {
+define_component!(video, |config, _| {
     let sub_title = d_sub_title!(t! {
         en: "Video",
         zh: "视频"
@@ -24,7 +24,7 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
     ];
 
     if config.video_source == VideoSource::No {
-        return column.push(source);
+        return column.push(source).into();
     }
 
     let camera_size = match &config.video_size {
@@ -130,5 +130,5 @@ pub fn video<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, i
         );
     }
 
-    column.push(source).push(codec).push(orientation)
-}
+    column.push(source).push(codec).push(orientation).into()
+});

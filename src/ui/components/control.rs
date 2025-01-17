@@ -1,15 +1,13 @@
-use crate::ui::{ComponentConfig, Message, StateButton};
-use crate::{d_column, d_row, d_sub_title, t};
-use iced::widget::{text, Column};
+use crate::ui::{Message, StateButton};
+use crate::{d_column, d_row, d_sub_title, define_component, t};
+use iced::widget::text;
 
-pub fn control<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, iced::Renderer> {
-    let sub_title = d_sub_title!(
-        t! {
-            en: "Control",
-            zh: "控制"
-        }
-        .to_string(),
-    );
+define_component!(control, |config, _| {
+    let sub_title = d_sub_title!(t! {
+        en: "Control",
+        zh: "控制"
+    }
+    .to_string(),);
 
     let keyboard = d_row![
         text(
@@ -42,5 +40,5 @@ pub fn control<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme,
         StateButton::pick_list(config.gamepad, Message::GamepadChanged)
     ];
 
-    d_column![sub_title, keyboard, mouse, gamepad]
-}
+    d_column![sub_title, keyboard, mouse, gamepad].into()
+});

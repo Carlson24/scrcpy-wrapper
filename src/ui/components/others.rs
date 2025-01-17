@@ -1,8 +1,8 @@
-use crate::ui::{ComponentConfig, Message, StateButton};
-use crate::{d_button, d_column, d_row, d_sub_title, d_text_input, t};
-use iced::widget::{checkbox, text, Column};
+use crate::ui::{Message, StateButton};
+use crate::{d_button, d_column, d_row, d_sub_title, d_text_input, define_component, t};
+use iced::widget::{checkbox, text};
 
-pub fn others<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, iced::Renderer> {
+define_component!(others, |config, _| {
     let sub_title = d_sub_title!(t! {
         en: "Others",
         zh: "其他"
@@ -115,4 +115,5 @@ pub fn others<'a>(config: &ComponentConfig) -> Column<'a, Message, iced::Theme, 
         additional_args,
         reset
     ]
-}
+    .into()
+});

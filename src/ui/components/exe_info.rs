@@ -1,8 +1,8 @@
-use crate::ui::{ComponentConfig, Message};
-use crate::{d_row, d_text_input, t};
-use iced::widget::{text, Row};
+use crate::ui::Message;
+use crate::{d_row, d_text_input, define_component, t};
+use iced::widget::text;
 
-pub fn exe_info<'a>(config: &ComponentConfig) -> Row<'a, Message, iced::Theme, iced::Renderer> {
+define_component!(exe_info, |config, _| {
     let executable_path = {
         let exe_str = match &config.executable {
             None => String::from(""),
@@ -25,5 +25,5 @@ pub fn exe_info<'a>(config: &ComponentConfig) -> Row<'a, Message, iced::Theme, i
         executable_path,
     ];
 
-    executable_path_row
-}
+    executable_path_row.into()
+});

@@ -1,32 +1,30 @@
 use crate::config::VideoSource;
-use crate::ui::{ComponentConfig, Message};
-use crate::{d_column, d_row, d_sub_title, d_text_input, t};
-use iced::widget::{checkbox, text, Column};
+use crate::ui::Message;
+use crate::{d_column, d_row, d_sub_title, d_text_input, define_component, t};
+use iced::widget::{checkbox, text};
 
-pub fn virtual_display<'a>(
-    config: &ComponentConfig,
-) -> Column<'a, Message, iced::Theme, iced::Renderer> {
-    let sub_title = d_sub_title!(
-        t! {
-            en: "Virtual display",
-            zh: "虚拟显示器"
-        }
-        .to_string(),
-    );
+define_component!(virtual_display, |config, _| {
+    let sub_title = d_sub_title!(t! {
+        en: "Virtual display",
+        zh: "虚拟显示器"
+    }
+    .to_string(),);
 
     let mut column = d_column![sub_title];
 
     if config.video_source != VideoSource::Display {
-        return column.push(
-            text(
-                t! {
-                    en: "Not using display",
-                    zh: "未使用显示器"
-                }
-                .to_string(),
+        return column
+            .push(
+                text(
+                    t! {
+                        en: "Not using display",
+                        zh: "未使用显示器"
+                    }
+                    .to_string(),
+                )
+                .color([0.5, 0.5, 0.5]),
             )
-            .color([0.5, 0.5, 0.5]),
-        );
+            .into();
     }
 
     let enable_virtual_display = checkbox(
@@ -83,5 +81,5 @@ pub fn virtual_display<'a>(
     if config.virtual_display {
         column = column.push(display_size).push(destroy_app_on_close);
     }
-    column
-}
+    column.into()
+});

@@ -1,11 +1,9 @@
 use crate::config::{AudioCodec, AudioSource, VideoSource};
-use crate::ui::{ComponentConfig, Message};
-use crate::{d_column, d_row, d_sub_title, d_text_input, t};
-use iced::widget::{checkbox, text, Column};
+use crate::ui::Message;
+use crate::{d_column, d_row, d_sub_title, d_text_input, define_component, t};
+use iced::widget::{checkbox, text};
 
-pub fn performance<'a>(
-    config: &ComponentConfig,
-) -> Column<'a, Message, iced::Theme, iced::Renderer> {
+define_component!(performance, |config, _| {
     let have_audio = config.audio_source != AudioSource::No;
     let have_video = config.video_source != VideoSource::No;
 
@@ -18,16 +16,18 @@ pub fn performance<'a>(
     let mut column = d_column![sub_title];
 
     if !have_audio && !have_video {
-        return column.push(
-            text(
-                t! {
-                    en: "No audio and video source",
-                    zh: "没有音频和视频源"
-                }
-                .to_string(),
+        return column
+            .push(
+                text(
+                    t! {
+                        en: "No audio and video source",
+                        zh: "没有音频和视频源"
+                    }
+                    .to_string(),
+                )
+                .color([0.5, 0.5, 0.5]),
             )
-            .color([0.5, 0.5, 0.5]),
-        );
+            .into();
     }
 
     let mut bit_rate = d_row![text(
@@ -172,5 +172,5 @@ pub fn performance<'a>(
         );
     }
 
-    column.push(buffer)
-}
+    column.push(buffer).into()
+});

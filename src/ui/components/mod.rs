@@ -8,6 +8,7 @@ mod control;
 mod output;
 mod virtual_display;
 mod others;
+mod component;
 
 pub use exe_info::*;
 pub use action_section::*;
