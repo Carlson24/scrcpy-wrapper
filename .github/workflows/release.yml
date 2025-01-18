@@ -36,7 +36,7 @@ jobs:
           - windows
         include:
           - os: linux
-            host_os: ubuntu-20.04
+            host_os: ubuntu-22.04
           - os: macos
             host_os: macos
           - os: windows
@@ -47,10 +47,25 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           key: release-${{ matrix.os }}
+      - name: install cross
+        if: ${{ matrix.os == 'linux' }}
+        run: cargo install cross
       - name: Build
+        if: ${{ matrix.os == 'linux' }}
+        run: cross build --target x86_64-unknown-linux-musl
+      - name: Build
+        if: ${{ matrix.os != 'linux' }}
         run: cargo build --release
       - name: Pre-upload
-        if: ${{ matrix.os != 'windows' }}
+        if: ${{ matrix.os == 'linux' }}
+        run: |
+          mkdir target/scrcpy-wrapper || rm -rf target/scrcpy-wrapper/*
+          cp README.md target/scrcpy-wrapper/README.md
+          cp target/x86_64-unknown-linux-musl/release/scrcpy-wrapper target/scrcpy-wrapper/scrcpy-wrapper
+          cd target/scrcpy-wrapper
+          zip -r scrcpy-wrapper-${{ matrix.os }}.zip *
+      - name: Pre-upload
+        if: ${{ matrix.os == 'macos' }}
         run: |
           mkdir target/scrcpy-wrapper || rm -rf target/scrcpy-wrapper/*
           cp README.md target/scrcpy-wrapper/README.md
