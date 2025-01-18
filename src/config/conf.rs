@@ -128,41 +128,35 @@ impl ConfigRaw {
         };
         let executable = match &self.executable {
             None => {
-                let path = resolve(
-                    base,
-                    if cfg!(target_os = "windows") {
-                        "scrcpy.exe"
-                    } else {
-                        "scrcpy"
-                    },
-                );
-                if Path::new(&path).exists() {
-                    Some(path)
-                } else {
-                    let mut executable: Option<String> = None;
-                    if let Ok(path) = env::var("PATH") {
-                        let mut flag = false;
-                        for file in if cfg!(target_os = "windows") {
-                            vec!["scrcpy.exe", "scrcpy.cmd", "scrcpy.bat"]
-                        } else {
-                            vec!["scrcpy", "scrcpy.sh"]
-                        } {
-                            for dir in path.split(';') {
-                                let full_path = Path::new(dir).join(file);
+                let mut executable: Option<String> = None;
+                let mut search_list = vec![base.to_string()];
+                if let Ok(path) = env::var("PATH") {
+                    #[cfg(target_os = "windows")]
+                    let path_sep = ";";
+                    #[cfg(not(target_os = "windows"))]
+                    let path_sep = ":";
+                    search_list.extend(path.split(path_sep).map(|s| s.to_string()));
+                }
+                let mut flag = false;
+                #[cfg(target_os = "windows")]
+                let search_filename_list = vec!["scrcpy.exe", "scrcpy.cmd", "scrcpy.bat"];
+                #[cfg(not(target_os = "windows"))]
+                let search_filename_list = vec!["scrcpy", "scrcpy.sh"];
+                for file in search_filename_list {
+                    for dir in &search_list {
+                        let full_path = Path::new(dir).join(file);
 
-                                if fs::metadata(&full_path).is_ok() && full_path.is_file() {
-                                    executable = Some(full_path.to_string_lossy().to_string());
-                                    flag = true;
-                                    break;
-                                }
-                            }
-                            if flag {
-                                break;
-                            }
+                        if fs::metadata(&full_path).is_ok() && full_path.is_file() {
+                            executable = Some(full_path.to_string_lossy().to_string());
+                            flag = true;
+                            break;
                         }
                     }
-                    executable
+                    if flag {
+                        break;
+                    }
                 }
+                executable
             }
             Some(v) => Some(v.clone()),
         };
