@@ -1,7 +1,7 @@
 use crate::i18n::{Language, LANGUAGE};
 use crate::t;
 use serde::{Deserialize, Serialize};
-use std::env::current_dir;
+use std::env::{current_dir, current_exe};
 use std::error::Error;
 use std::fs::File;
 use std::io::{Read, Write};
@@ -118,8 +118,7 @@ pub struct Config {
 }
 impl ConfigRaw {
     pub fn to_config(&self, apply: bool) -> Result<Config, Box<dyn Error>> {
-        let base = env::current_exe()?;
-        let base = base.to_str().unwrap();
+        let base = current_exe()?.parent().unwrap().to_str().unwrap().to_string();
         let language = match &self.language {
             Some(language) => match language.as_str() {
                 "zh" => {
@@ -141,7 +140,7 @@ impl ConfigRaw {
         let executable = match &self.executable {
             None => {
                 let mut executable: Option<String> = None;
-                let mut search_list = vec![base.to_string()];
+                let mut search_list = vec![base];
                 if let Ok(path) = env::var("PATH") {
                     #[cfg(target_os = "windows")]
                     let path_sep = ";";
