@@ -10,6 +10,10 @@ Download from the [releases](https://github.com/Bluemangoo/scrcpy-wrapper/releas
 
 Run the executable.
 
+### Settings
+
+It will save the settings to `scrcpy-wrapper.toml` under `$XDG_CONFIG_HOME`(if exists) or `~/.config` .
+
 ### Language
 
 We support English and Chinese (Simplified).

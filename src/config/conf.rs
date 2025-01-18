@@ -1,13 +1,25 @@
 use crate::i18n::{Language, LANGUAGE};
 use crate::t;
-use crate::util::path::resolve;
-use async_std::io::WriteExt;
 use serde::{Deserialize, Serialize};
+use std::env::current_dir;
 use std::error::Error;
 use std::fs::File;
 use std::io::{Read, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::{env, fs};
+
+#[inline]
+fn config_path() -> PathBuf {
+    let xdg_config_home = env::var("XDG_CONFIG_HOME").unwrap_or_default();
+    if xdg_config_home.trim().is_empty() {
+        home::home_dir()
+            .map(|home| home.join(".config"))
+            .unwrap_or(current_dir().unwrap())
+    } else {
+        PathBuf::from(xdg_config_home)
+    }
+    .join("scrcpy-wrapper.toml")
+}
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ConfigRaw {
@@ -210,11 +222,8 @@ impl ConfigRaw {
     }
 
     pub fn load() -> Result<Self, Box<dyn Error>> {
-        let base = env::current_exe()?;
-        let base = base.to_str().unwrap();
-        if Path::new(&resolve(base, "scrcpy-wrapper.toml")).exists() {
-            let path = resolve(base, "scrcpy-wrapper.toml");
-            let mut file = File::open(&path)?;
+        if Path::new(&config_path()).exists() {
+            let mut file = File::open(config_path())?;
             let mut toml_str = String::new();
             file.read_to_string(&mut toml_str)?;
             let t: ConfigRaw = toml::from_str(toml_str.as_str())?;
@@ -225,20 +234,11 @@ impl ConfigRaw {
     }
 
     pub fn dump(&self) -> Result<(), Box<dyn Error>> {
-        let base = env::current_exe()?;
-        let base = base.to_str().unwrap();
-        let path = resolve(base, "scrcpy-wrapper.toml");
-        let mut file = File::create(&path)?;
+        if let Some(parent) = config_path().parent() {
+            fs::create_dir_all(parent)?;
+        }
+        let mut file = File::create(config_path())?;
         file.write_all(toml::to_string(self)?.as_bytes())?;
-        Ok(())
-    }
-
-    pub async fn dump_async(&self) -> Result<(), Box<dyn Error>> {
-        let base = env::current_exe()?;
-        let base = base.to_str().unwrap();
-        let path = resolve(base, "scrcpy-wrapper.toml");
-        let mut file = async_std::fs::File::create(&path).await?;
-        file.write_all(toml::to_string(self)?.as_bytes()).await?;
         Ok(())
     }
 }
