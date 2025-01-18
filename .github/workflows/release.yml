@@ -25,7 +25,7 @@ jobs:
           git rev-parse $version || exit 0
           exit 1
   build:
-    runs-on: ${{ matrix.host_os }}-latest
+    runs-on: ${{ matrix.host_os }}
     if: ${{ contains(github.event.commits[0].message, '+release') || github.event_name == 'workflow_dispatch' }}
     needs: check
     strategy:
@@ -38,9 +38,9 @@ jobs:
           - os: linux
             host_os: ubuntu-22.04
           - os: macos
-            host_os: macos
+            host_os: macos-latest
           - os: windows
-            host_os: windows
+            host_os: windows-latest
     steps:
       - uses: actions/checkout@v4
       - name: Cache Rust
