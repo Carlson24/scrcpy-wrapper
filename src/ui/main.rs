@@ -6,11 +6,10 @@ use crate::i18n::{Language, LANGUAGE};
 use crate::ui::{components, style_default};
 use crate::util::build_args;
 use crate::{d_hr, t, ARGS, CONFIG};
-use dark_light::Mode;
 use iced::widget::container::Id;
 use iced::widget::{column, container, scrollable};
 use iced::window::close;
-use iced::{window, Element, Size, Subscription, Task, Theme};
+use iced::{window, Element, Size, Subscription, Task};
 
 pub struct WinMain {
     pub(crate) args: String,
@@ -367,14 +366,6 @@ impl WinMain {
         )
         .id(Id::new("page"))
         .into()
-    }
-
-    pub fn theme(&self) -> Theme {
-        match dark_light::detect() {
-            Mode::Dark => Theme::Dark,
-            Mode::Light => Theme::Light,
-            Mode::Default => Theme::Light,
-        }
     }
 
     pub fn subscription(&self) -> Subscription<Message> {

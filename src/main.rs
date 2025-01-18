@@ -49,7 +49,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         }),
         ..Default::default()
     })
-    .theme(ui::WinMain::theme)
     .subscription(ui::WinMain::subscription)
     .default_font(Font::with_name(if cfg!(target_os = "windows") {
         "Microsoft YaHei"
@@ -61,7 +60,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     .run()
     .unwrap();
 
-    let exe = CONFIG.read().unwrap().executable.clone().unwrap();
+    let exe = CONFIG.read().unwrap().executable.clone().unwrap_or_default();
     let command = ARGS.read().unwrap().clone();
 
     if let Some(args) = command {
