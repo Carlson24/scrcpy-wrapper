@@ -59,7 +59,7 @@ jobs:
           export RUSTUP_TOOLCHAIN=stable
           export CARGO_TARGET_DIR='target/release/'
           cargo fetch --locked --target "$(rustc -vV | sed -n 's/host: //p')"
-          cargo build --frozen --release --all-features --target x86_64-unknown-linux-musl
+          cargo build --verbose --frozen --release --all-features --target x86_64-unknown-linux-musl
       - name: Build
         if: ${{ matrix.os != 'linux' }}
         run: cargo build --release
