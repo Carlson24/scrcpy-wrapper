@@ -53,10 +53,12 @@ jobs:
           sudo apt-get update -y
           sudo apt-get -yq --no-install-suggests --no-install-recommends install musl-tools
           rustup target add x86_64-unknown-linux-musl
-          export CARGO_TARGET_DIR='target/release/'
       - name: Build
         if: ${{ matrix.os == 'linux' }}
-        run: cargo build --release --target x86_64-unknown-linux-musl
+        run: |
+          export RUSTUP_TOOLCHAIN=stable
+          export CARGO_TARGET_DIR='target/release/'
+          cargo build --frozen --release --all-features --target x86_64-unknown-linux-musl
       - name: Build
         if: ${{ matrix.os != 'linux' }}
         run: cargo build --release
