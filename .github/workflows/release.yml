@@ -68,7 +68,7 @@ jobs:
         run: |
           mkdir target/scrcpy-wrapper || rm -rf target/scrcpy-wrapper/*
           cp README.md target/scrcpy-wrapper/README.md
-          cp target/x86_64-unknown-linux-musl/release/scrcpy-wrapper target/scrcpy-wrapper/scrcpy-wrapper
+          cp target/release/x86_64-unknown-linux-musl/release/scrcpy-wrapper target/scrcpy-wrapper/scrcpy-wrapper
           cd target/scrcpy-wrapper
           zip -r scrcpy-wrapper-${{ matrix.os }}.zip *
       - name: Pre-upload
